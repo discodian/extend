@@ -14,10 +14,7 @@
 
 namespace Discodian\Extend\Concerns;
 
-use Discodian\Extend\Message;
-use Discodian\Extend\Responses\Response;
-
-interface AnswersMessages extends ReadsMessages
+interface ReadsMessages
 {
-    public function respond(Message $message): ?Response;
+    public function whenMentioned(): bool;
 }
