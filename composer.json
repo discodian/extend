@@ -1,0 +1,24 @@
+{
+    "name": "discodian/extend",
+    "description": "The Discord extension assistance used in discodian",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Daniël Klabbers",
+            "email": "daniel@klabbers.email",
+            "homepage": "https://luceos.com"
+        }
+    ],
+    "require": {
+        "discodian/core": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Discodian\\Extend\\": "src/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
