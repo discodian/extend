@@ -14,37 +14,34 @@
 
 namespace Discodian\Extend\Responses;
 
-abstract class Response
+use Discodian\Parts\Guild\Embed;
+
+class TextResponse extends Response
 {
+
     /**
-     * Answer privately.
+     * Send response as text to speech.
      *
      * @var bool
      */
-    protected $private = false;
+    protected $tts = false;
 
     /**
-     * The content of the reply.
+     * Add an embed.
      *
-     * @var string|null
+     * @var Embed
      */
-    protected $content;
+    protected $embed;
 
-    public function privately()
+    public function tts(bool $tts = true)
     {
-        $this->private = true;
+        $this->tts = $tts;
         return $this;
     }
 
-    public function openly()
+    public function embed(Embed $embed = null)
     {
-        $this->private = false;
-        return $this;
-    }
-
-    public function with(string $content = null)
-    {
-        $this->content = $content;
+        $this->embed = $embed;
         return $this;
     }
 }
