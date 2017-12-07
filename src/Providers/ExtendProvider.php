@@ -15,6 +15,7 @@
 namespace Discodian\Extend\Providers;
 
 use Discodian\Extend\Listeners\ProxiesMessages;
+use Discodian\Extend\Responses\Registry;
 use Illuminate\Support\ServiceProvider;
 
 class ExtendProvider extends ServiceProvider
@@ -22,5 +23,6 @@ class ExtendProvider extends ServiceProvider
     public function register()
     {
         $this->app['events']->subscribe(ProxiesMessages::class);
+        $this->app->singleton(Registry::class);
     }
 }

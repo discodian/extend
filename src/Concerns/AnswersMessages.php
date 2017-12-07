@@ -14,10 +14,10 @@
 
 namespace Discodian\Extend\Concerns;
 
-use Discodian\Extend\Message;
+use Discodian\Extend\Messages\Message;
 use Discodian\Extend\Responses\Response;
 
 interface AnswersMessages extends ReadsMessages
 {
-    public function respond(Message $message): ?Response;
+    public function respond(Message $message, array $options = []): ?Response;
 }

@@ -17,6 +17,7 @@ namespace Discodian\Extend\Messages;
 use Discodian\Parts\Bot;
 use Discodian\Parts\Channel\Channel;
 use Discodian\Parts\Channel\Message as Part;
+use Illuminate\Support\Str;
 
 class Factory
 {
@@ -34,22 +35,25 @@ class Factory
     {
         $channelType = $part->channel->type;
 
-        if ($channelType === Channel::TYPE_DM) {
-            $message = DirectMessage::fromPart($event->part);
+        if ($channelType === Channel::TYPE_TEXT) {
+            $message = TextChannelMessage::fromPart($part);
         }
-        if ($channelType === Channel::TYPE_GROUP) {
-            $message = GroupMessage::fromPart($event->part);
+        if ($channelType === Channel::TYPE_DM) {
+            $message = DirectMessage::fromPart($part);
         }
         if ($channelType === Channel::TYPE_VOICE) {
-            $message = VoiceChannelMessage::fromPart($event->part);
+            $message = VoiceChannelMessage::fromPart($part);
         }
-        if ($channelType === Channel::TYPE_TEXT) {
-            $message = TextChannelMessage::fromPart($event->part);
+        if ($channelType === Channel::TYPE_GROUP) {
+            $message = GroupMessage::fromPart($part);
         }
 
-        if ($channelType !== Channel::TYPE_VOICE) {
+        if ($channelType !== Channel::TYPE_VOICE && $part->mentions) {
             $message->mentionsMe = $part->mentions->has($this->bot->getKey());
+            $message->addressesMe = Str::startsWith($message->content, (string) $this->bot);
         }
+
+        $message->channelType = $channelType;
 
         return $message;
     }

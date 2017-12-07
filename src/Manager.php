@@ -65,8 +65,8 @@ class Manager
             })
             ->each(function (Extension $extension) {
                 $bootstrapper = $extension->bootstrapper();
-                logs($bootstrapper);
                 $this->app->call(require $bootstrapper);
+                logs("Bootstrapped extension {$extension->name}.");
             });
     }
 }
