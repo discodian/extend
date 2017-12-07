@@ -14,21 +14,14 @@
 
 namespace Discodian\Extend\Responses;
 
-abstract class Response
-{
-    /**
-     * Answer privately.
-     *
-     * @var bool
-     */
-    protected $private = false;
+use Illuminate\Support\Fluent;
 
-    /**
-     * The content of the reply.
-     *
-     * @var string|null
-     */
-    protected $content;
+/**
+ * @property bool $private
+ * @property string $content
+ */
+abstract class Response extends Fluent
+{
 
     public function privately()
     {

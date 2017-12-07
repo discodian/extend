@@ -16,32 +16,11 @@ namespace Discodian\Extend\Responses;
 
 use Discodian\Parts\Guild\Embed;
 
+/**
+ * {@inheritdoc}
+ * @property bool $tts
+ * @property Embed $embed
+ */
 class TextResponse extends Response
 {
-
-    /**
-     * Send response as text to speech.
-     *
-     * @var bool
-     */
-    protected $tts = false;
-
-    /**
-     * Add an embed.
-     *
-     * @var Embed
-     */
-    protected $embed;
-
-    public function tts(bool $tts = true)
-    {
-        $this->tts = $tts;
-        return $this;
-    }
-
-    public function embed(Embed $embed = null)
-    {
-        $this->embed = $embed;
-        return $this;
-    }
 }

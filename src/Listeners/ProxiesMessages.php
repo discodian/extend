@@ -14,16 +14,20 @@
 
 namespace Discodian\Extend\Listeners;
 
+use Discodian\Core\Events\Parts\Set;
 use Discodian\Extend\Concerns\AnswersMessages;
 use Discodian\Extend\Concerns\ReadsMessages;
-use Discodian\Extend\Messages\Message;
-use Discodian\Core\Events\Parts\Set;
 use Discodian\Extend\Events\Message as Event;
 use Discodian\Extend\Messages\Factory;
+use Discodian\Extend\Messages\Message;
 use Discodian\Extend\Responses\Registry;
+use Discodian\Extend\Responses\Response;
 use Discodian\Parts\Channel\Message as Part;
+use GuzzleHttp\ClientInterface;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Str;
+use React\Promise\Promise;
+use function React\Promise\all;
 
 class ProxiesMessages
 {
@@ -35,11 +39,16 @@ class ProxiesMessages
      * @var Factory
      */
     private $factory;
+    /**
+     * @var ClientInterface
+     */
+    private $http;
 
-    public function __construct(Dispatcher $events, Factory $factory)
+    public function __construct(Dispatcher $events, Factory $factory, ClientInterface $http)
     {
         $this->events = $events;
         $this->factory = $factory;
+        $this->http = $http;
     }
 
     public function subscribe(Dispatcher $events)
@@ -67,7 +76,10 @@ class ProxiesMessages
     {
         /** @var Registry $registry */
         $registry = app()->make(Registry::class);
-        $registry->get()->each(function (string $listener) use ($message) {
+
+        $promises = [];
+
+        $registry->get()->each(function (string $listener) use ($message, &$promises) {
             /** @var ReadsMessages|AnswersMessages $listener */
             $listener = app()->make($listener);
             $options = [];
@@ -99,9 +111,26 @@ class ProxiesMessages
 
             $response = $listener->respond($message, $options);
 
-            if ($response) {
-                // @todo run call
+            if ($response instanceof Promise) {
+                $promises[] = $response;
             }
         });
+
+        all($promises)
+            ->done(function ($responses) use ($message) {
+                logs("promises received", $responses);
+                /** @var Response $response */
+                foreach ($responses as $response) {
+                    $this->http->request('post', "channels/{$message->channel_id}/messages", [
+                        'json' => [
+                            'content' => $response->content,
+                            'tts' => $response->tts,
+                            'embed' => $response->embed
+                        ]
+                    ]);
+                }
+            }, function ($responses) {
+                logs($responses);
+            });
     }
 }

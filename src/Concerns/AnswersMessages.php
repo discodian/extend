@@ -16,8 +16,14 @@ namespace Discodian\Extend\Concerns;
 
 use Discodian\Extend\Messages\Message;
 use Discodian\Extend\Responses\Response;
+use React\Promise\Promise;
 
 interface AnswersMessages extends ReadsMessages
 {
-    public function respond(Message $message, array $options = []): ?Response;
+    /**
+     * @param Message $message
+     * @param array $options
+     * @return null|Response|Response[]|Promise
+     */
+    public function respond(Message $message, array $options = []);
 }
