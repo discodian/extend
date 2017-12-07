@@ -28,6 +28,5 @@ abstract class Message
 
     public function respond(Response $response)
     {
-
     }
 }
