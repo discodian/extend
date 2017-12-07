@@ -50,7 +50,6 @@ class ProxiesMessages
     public function proxy(Set $event)
     {
         if ($event->part instanceof Part) {
-
             $message = $this->factory->create($event->part);
 
             logs("Distributing to response registry.");
