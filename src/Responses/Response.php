@@ -22,7 +22,6 @@ use Illuminate\Support\Fluent;
  */
 abstract class Response extends Fluent
 {
-
     public function privately()
     {
         $this->private = true;
