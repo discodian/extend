@@ -39,4 +39,10 @@ abstract class Response extends Fluent
         $this->content = $content;
         return $this;
     }
+
+    public function view(string $view, array $data = [])
+    {
+        $this->content = view($view, $data);
+        return $this;
+    }
 }
