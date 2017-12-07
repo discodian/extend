@@ -42,7 +42,7 @@ class Manager
 
             $this->extensions = collect(file_exists($path) ? json_decode(file_get_contents($path), true) : [])
                 ->filter(function (array $package) {
-                    return Arr::get($package, 'type') !== 'discodian-extension';
+                    return Arr::get($package, 'type') === 'discodian-extension';
                 })
                 ->mapWithKeys(function (array $package) {
                     $extension = Extension::new($package);
@@ -60,9 +60,12 @@ class Manager
     public function boot()
     {
         $this->extensions()
-            ->where('hasBootstrapper', true)
+            ->filter(function (Extension $extension) {
+                return $extension->hasBootstrapper();
+            })
             ->each(function (Extension $extension) {
                 $bootstrapper = $extension->bootstrapper();
+                logs($bootstrapper);
                 $this->app->call(require $bootstrapper);
             });
     }

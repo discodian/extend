@@ -20,6 +20,7 @@ use Discodian\Parts\Channel\Message as Part;
 abstract class Message
 {
     public $private = false;
+    public $mentionsMe = false;
 
     public static function fromPart(Part $part): Message
     {
