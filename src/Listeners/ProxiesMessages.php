@@ -61,6 +61,10 @@ class ProxiesMessages
         if ($event->part instanceof Part) {
             $message = $this->factory->create($event->part);
 
+            if ($message->mine) {
+                return;
+            }
+
             logs("Distributing to response registry.");
 
             $this->registryHandler($message);

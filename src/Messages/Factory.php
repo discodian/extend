@@ -26,13 +26,14 @@ class Factory
      */
     private $bot;
 
-    public function __construct(Bot $bot)
+    public function __construct()
     {
-        $this->bot = $bot;
     }
 
     public function create(Part $part)
     {
+        $bot = app(Bot::class);
+
         $channelType = $part->channel->type;
 
         if ($channelType === Channel::TYPE_TEXT) {
@@ -49,10 +50,11 @@ class Factory
         }
 
         if ($channelType !== Channel::TYPE_VOICE && $part->mentions) {
-            $message->mentionsMe = $part->mentions->has($this->bot->getKey());
-            $message->addressesMe = Str::startsWith($message->content, (string) $this->bot);
+            $message->mentionsMe = $part->mentions->has($bot->getKey());
+            $message->addressesMe = Str::startsWith($message->content, (string) $bot);
         }
 
+        $message->mine = $message->author->id === $bot->id;
         $message->channelType = $channelType;
 
         return $message;

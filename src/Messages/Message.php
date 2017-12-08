@@ -14,22 +14,18 @@
 
 namespace Discodian\Extend\Messages;
 
-use Discodian\Extend\Responses\Response;
 use Discodian\Parts\Channel\Message as Part;
 
 /**
  * {@inheritdoc}
  * @property bool $private
  * @property bool $mentionsMe
+ * @property bool $mine
  */
 abstract class Message extends Part
 {
     public static function fromPart(Part $part): Message
     {
         return new static($part->attributes);
-    }
-
-    public function respond(Response $response)
-    {
     }
 }
