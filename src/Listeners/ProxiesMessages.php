@@ -15,6 +15,7 @@
 namespace Discodian\Extend\Listeners;
 
 use Discodian\Core\Events\Parts\Set;
+use Discodian\Core\Response\Handler;
 use Discodian\Extend\Concerns\AnswersMessages;
 use Discodian\Extend\Concerns\ReadsMessages;
 use Discodian\Extend\Events\Message as Event;
@@ -23,7 +24,6 @@ use Discodian\Extend\Messages\Message;
 use Discodian\Extend\Responses\Registry;
 use Discodian\Extend\Responses\Response;
 use Discodian\Parts\Channel\Message as Part;
-use GuzzleHttp\ClientInterface;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Str;
 use React\Promise\Promise;
@@ -40,15 +40,15 @@ class ProxiesMessages
      */
     private $factory;
     /**
-     * @var ClientInterface
+     * @var Handler
      */
-    private $http;
+    private $respond;
 
-    public function __construct(Dispatcher $events, Factory $factory, ClientInterface $http)
+    public function __construct(Dispatcher $events, Factory $factory, Handler $respond)
     {
         $this->events = $events;
         $this->factory = $factory;
-        $this->http = $http;
+        $this->respond = $respond;
     }
 
     public function subscribe(Dispatcher $events)
@@ -114,6 +114,9 @@ class ProxiesMessages
 
             $response = $listener->respond($message, $options);
 
+            if ($response instanceof Response) {
+                $this->respond->to($message, $response);
+            }
             if ($response instanceof Promise) {
                 $promises[] = $response;
             }
@@ -124,16 +127,10 @@ class ProxiesMessages
                 logs("promises received", $responses);
                 /** @var Response $response */
                 foreach ($responses as $response) {
-                    $this->http->request('post', "channels/{$message->channel_id}/messages", [
-                        'json' => [
-                            'content' => $response->content,
-                            'tts' => $response->tts,
-                            'embed' => $response->embed
-                        ]
-                    ]);
+                    $this->respond->to($message, $response);
                 }
             }, function ($responses) {
-                logs($responses);
+                logs("Resolving response promises failed.");
             });
     }
 }
