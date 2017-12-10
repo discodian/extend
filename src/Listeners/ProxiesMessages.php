@@ -44,7 +44,7 @@ class ProxiesMessages
      */
     private $response;
 
-    public function __construct(Dispatcher $events, Factory $factory, Factory $response)
+    public function __construct(Dispatcher $events, Factory $factory, ResponseFactory $response)
     {
         $this->events = $events;
         $this->factory = $factory;
