@@ -15,7 +15,7 @@
 namespace Discodian\Extend\Listeners;
 
 use Discodian\Core\Events\Parts\Set;
-use Discodian\Core\Response\Handler;
+use Discodian\Core\Response\Factory as ResponseFactory;
 use Discodian\Extend\Concerns\AnswersMessages;
 use Discodian\Extend\Concerns\ReadsMessages;
 use Discodian\Extend\Events\Message as Event;
@@ -40,15 +40,15 @@ class ProxiesMessages
      */
     private $factory;
     /**
-     * @var Handler
+     * @var ResponseFactory
      */
-    private $respond;
+    private $response;
 
-    public function __construct(Dispatcher $events, Factory $factory, Handler $respond)
+    public function __construct(Dispatcher $events, Factory $factory, Factory $response)
     {
         $this->events = $events;
         $this->factory = $factory;
-        $this->respond = $respond;
+        $this->response = $response;
     }
 
     public function subscribe(Dispatcher $events)
@@ -115,7 +115,7 @@ class ProxiesMessages
             $response = $listener->respond($message, $options);
 
             if ($response instanceof Response) {
-                $this->respond->to($message, $response);
+                $this->response->respond($message, $response);
             }
             if ($response instanceof Promise) {
                 $promises[] = $response;
@@ -127,7 +127,7 @@ class ProxiesMessages
                 logs("promises received", $responses);
                 /** @var Response $response */
                 foreach ($responses as $response) {
-                    $this->respond->to($message, $response);
+                    $this->response->respond($message, $response);
                 }
             }, function ($responses) {
                 logs("Resolving response promises failed.");
