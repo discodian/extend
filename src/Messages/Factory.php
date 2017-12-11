@@ -21,7 +21,6 @@ use Illuminate\Support\Str;
 
 class Factory
 {
-
     public function create(Part $part)
     {
         $bot = app(Bot::class);
