@@ -65,13 +65,15 @@ class ProxiesMessages
                 return;
             }
 
-            logs("Distributing to response registry.");
+            if ($message instanceof Message) {
+                $this->registryHandler($message);
 
-            $this->registryHandler($message);
+                logs("Proxying message type " . get_class($message));
 
-            logs("Proxying message type " . get_class($message));
-
-            $this->events->dispatch(new Event($message));
+                $this->events->dispatch(new Event($message));
+            } else {
+                logs('error', $message);
+            }
         }
     }
 

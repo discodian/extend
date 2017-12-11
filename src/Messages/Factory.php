@@ -21,20 +21,14 @@ use Illuminate\Support\Str;
 
 class Factory
 {
-    /**
-     * @var Bot
-     */
-    private $bot;
-
-    public function __construct()
-    {
-    }
 
     public function create(Part $part)
     {
         $bot = app(Bot::class);
 
-        $channelType = $part->channel->type;
+        $channelType = (int) $part->channel->type;
+
+        $message = null;
 
         if ($channelType === Channel::TYPE_TEXT) {
             $message = TextChannelMessage::fromPart($part);
@@ -47,6 +41,10 @@ class Factory
         }
         if ($channelType === Channel::TYPE_GROUP) {
             $message = GroupMessage::fromPart($part);
+        }
+
+        if (is_null($message)) {
+            logs('error', "What is channel type {$channelType}?", $part->toArray());
         }
 
         if ($channelType !== Channel::TYPE_VOICE && $part->mentions) {
