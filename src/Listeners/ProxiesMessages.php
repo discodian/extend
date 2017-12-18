@@ -126,7 +126,6 @@ class ProxiesMessages
 
         all($promises)
             ->done(function ($responses) use ($message) {
-                logs("promises received", $responses);
                 /** @var Response $response */
                 foreach ($responses as $response) {
                     if (is_array($response)) {
