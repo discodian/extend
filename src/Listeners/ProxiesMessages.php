@@ -129,6 +129,11 @@ class ProxiesMessages
                 logs("promises received", $responses);
                 /** @var Response $response */
                 foreach ($responses as $response) {
+                    if (is_array($response)) {
+                        $response = collect($response)->first(function ($res) {
+                            return $res instanceof Response;
+                        });
+                    }
                     $this->response->respond($message, $response);
                 }
             }, function ($responses) {

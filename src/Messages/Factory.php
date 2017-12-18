@@ -28,10 +28,6 @@ class Factory
         $channelType = (int) $part->channel->type;
 
         $message = null;
-
-        if ($channelType === Channel::TYPE_TEXT) {
-            $message = TextChannelMessage::fromPart($part);
-        }
         if ($channelType === Channel::TYPE_DM) {
             $message = DirectMessage::fromPart($part);
         }
@@ -42,8 +38,16 @@ class Factory
             $message = GroupMessage::fromPart($part);
         }
 
+        if ($channelType === Channel::TYPE_TEXT) {
+            $message = true;
+        }
+
         if (is_null($message)) {
             logs('error', "What is channel type {$channelType}?", $part->toArray());
+        }
+
+        if (is_null($message) || $message === true) {
+            $message = TextChannelMessage::fromPart($part);
         }
 
         if ($channelType !== Channel::TYPE_VOICE && $part->mentions) {
@@ -51,7 +55,10 @@ class Factory
             $message->addressesMe = Str::startsWith($message->content, (string) $bot);
         }
 
-        $message->mine = $message->author->id === $bot->id;
+        if ($message->author) {
+            $message->mine = $message->author->id === $bot->id;
+        }
+
         $message->channelType = $channelType;
 
         return $message;
