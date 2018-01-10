@@ -14,11 +14,13 @@
 
 namespace Discodian\Extend\Responses;
 
+use Discodian\Parts\Channel\Channel;
 use Illuminate\Support\Fluent;
 
 /**
  * @property bool $private
  * @property string $content
+ * @property string $channel_id
  */
 abstract class Response extends Fluent
 {
@@ -43,6 +45,12 @@ abstract class Response extends Fluent
     public function view(string $view, array $data = [])
     {
         $this->content = view($view, $data)->render();
+        return $this;
+    }
+
+    public function on(Channel $channel)
+    {
+        $this->channel_id = $channel->id;
         return $this;
     }
 }
